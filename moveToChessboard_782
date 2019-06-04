@@ -1,0 +1,85 @@
+# this code just can move any column or row
+import numpy as np
+import copy
+class Solution(object):
+	def changeNum(self, matrix1, matrix2):
+		matrix2 = np.array(matrix2)
+		diff = 0
+		for i in range(len(matrix1)):
+			if all(matrix1[i] <> matrix2[i]):
+				diff += 1
+		return diff/2
+	
+	def createMatrix(self,type1,type2,times1,times2):
+		type1 = list(type1)
+		type2 = list(type2)
+		reMatrix = []
+		if times1 == times2:
+			for i in range(times1):
+				reMatrix.append(type1)
+				reMatrix.append(type2)
+		else:
+			if times1 > times2:
+				for i in range(min(times1, times2)):
+					reMatrix.append(type1)
+					reMatrix.append(type2)
+				reMatrix.append(type1)
+			else:
+				for i in range(min(times1, times2)):
+					reMatrix.append(type2)
+					reMatrix.append(type1)
+				reMatrix.append(type2)
+		return reMatrix
+		
+	def movesToChessboard(self, board):
+		board = np.array(board)
+		x_list, y_list = [], []
+		for col in range(len(board)):
+			x_list.append(tuple(board[col]))
+		if len(set(x_list)) <> 2:
+			return -1
+		else:
+			xtype1 = list(set(x_list))[0] #tuple
+			xtype2 = list(set(x_list))[1] #tuple
+		for row in range(len(board)):
+			y_list.append(tuple(board[:, row]))
+		if len(set(y_list)) <> 2:
+			return -1
+		else:
+			ytype1 = list(set(y_list))[0] #tuple
+			ytype2 = list(set(y_list))[1] #tuple
+			
+		if abs(xtype1.count(0) - xtype1.count(1)) in (0, 1):
+			if abs(ytype1.count(0) - ytype1.count(1)) in (0, 1):
+				if x_list.count(xtype1) <> x_list.count(xtype2): #jishu
+					xreMatrix = self.createMatrix(xtype1,xtype2,x_list.count(xtype1),x_list.count(xtype2))
+					xtimes = self.changeNum(copy.copy(board),xreMatrix)
+				else: #oushu
+					xreMatrix1 = self.createMatrix(xtype1,xtype2,x_list.count(xtype1),x_list.count(xtype2))
+					xreMatrix2 = self.createMatrix(xtype2,xtype1,x_list.count(xtype2),x_list.count(xtype1))
+					temp1 = self.changeNum(copy.copy(board),xreMatrix1)
+					temp2 = self.changeNum(copy.copy(board),xreMatrix2)
+					xtimes = min(temp1,temp2)
+				if y_list.count(ytype1) <> y_list.count(ytype2): #jishu
+					yreMatrix = self.createMatrix(ytype1,ytype2,y_list.count(ytype1),y_list.count(ytype2))
+					ytimes = self.changeNum(copy.copy(board.transpose()),yreMatrix)
+				else: #oushu
+					yreMatrix1 = self.createMatrix(ytype1,ytype2,y_list.count(ytype1),y_list.count(ytype2))
+					yreMatrix2 = self.createMatrix(ytype2,ytype1,y_list.count(ytype2),y_list.count(ytype1))
+					temp3 = self.changeNum(copy.copy(board.transpose()),yreMatrix1)
+					temp4 = self.changeNum(copy.copy(board.transpose()),yreMatrix2)
+					ytimes = min(temp3,temp4)
+			else:
+				return -1
+		else:
+			return -1
+		return xtimes + ytimes
+
+
+solution = Solution()
+print solution.movesToChessboard([[1,1,0],[0,0,1],[0,0,1]])
+
+
+
+
+
