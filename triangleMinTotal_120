@@ -1,0 +1,30 @@
+#2019/5/31
+class Solution(object):
+	def updateTriangle(self,triangle):
+		lenT = len(triangle)
+		new_list = []
+		for i in range(len(triangle[lenT-2])):
+			new_list.append(min(triangle[lenT-2][i]+triangle[lenT-1][i],triangle[lenT-2][i]+triangle[lenT-1][i+1]))
+		del (triangle[-1])
+		del (triangle[-1])
+		triangle.append(new_list)
+		return triangle
+	
+	def minimumTotal(self,triangle):
+		while True:
+			if len(triangle) == 1:
+				break
+			else:
+				triangle = self.updateTriangle(triangle)
+		return triangle[0][0]
+
+
+solution = Solution()
+print solution.minimumTotal([[-1],[-2,-3]])
+
+
+
+
+
+
+
